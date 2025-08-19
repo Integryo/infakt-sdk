@@ -2,7 +2,7 @@
   "name": "infakt-sdk",
   "type": "module",
   "version": "0.0.1",
-  "description": "Type-safe infakt SDK ",
+  "description": "Type-safe Infakt SDK",
   "author": "",
   "license": "ISC",
   "exports": {
