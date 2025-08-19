@@ -3,8 +3,8 @@
   "type": "module",
   "version": "0.0.1",
   "description": "Type-safe Infakt SDK",
-  "author": "",
-  "license": "ISC",
+  "author": "Integryo",
+  "license": "MIT",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
