@@ -130,13 +130,13 @@ export const Service = z.object({
 
 const Extensions = z.object({
   payments: z.object({
-    link: z.string().url().optional(),
+    link: z.string().nullable().optional(),
     available: z.boolean().optional(),
   }).partial().optional(),
   shares: z.object({
-    link: z.string().url().optional(),
+    link: z.string().nullable().optional(),
     available: z.boolean().optional(),
-    valid_until: DateYMD.optional(),
+    valid_until: DateYMD.nullable().optional(),
   }).partial().optional(),
 }).partial()
 
@@ -218,25 +218,11 @@ export const Invoice = z.object({
   vat_exchange_date_kind: VatExchangeDateKind.nullable().optional(),
 
   local_government_recipient_address: LooseDict.nullable().optional(),
-}).superRefine((v, ctx) => {
-  // If invoice_date_kind is 'continuous_date_end_on' then both dates must be present
-  if (v.invoice_date_kind === 'continuous_date_end_on') {
-    if (!v.continuous_service_start_on) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['continuous_service_start_on'],
-        message: 'Required when invoice_date_kind is \'continuous_date_end_on\'.',
-      })
-    }
-    if (!v.continuous_service_end_on) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['continuous_service_end_on'],
-        message: 'Required when invoice_date_kind is \'continuous_date_end_on\'.',
-      })
-    }
-  }
 })
+
+export const InvoiceField = z.enum(
+  Object.keys(Invoice.shape),
+)
 
 // -- Create (write) payload (no read-only fields) ----------------------------
 
@@ -305,41 +291,4 @@ export const InvoiceCreate = z.object({
   vat_exchange_date_kind: VatExchangeDateKind.nullable().optional(),
 
   local_government_recipient_address: LooseDict.nullable().optional(),
-}).superRefine((v, ctx) => {
-  // Client presence: if no client_id, require minimal inline data
-  if (!v.client_id) {
-    const inlineOk
-            = !!(v.client_company_name || (v.client_first_name && v.client_last_name))
-    if (!inlineOk) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-                    'Provide either client_id OR inline client data (company name OR first & last name).',
-        path: ['client_id'],
-      })
-    }
-  }
-  // Continuous service date requirements
-  if (v.invoice_date_kind === 'continuous_date_end_on') {
-    if (!v.continuous_service_start_on) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['continuous_service_start_on'],
-        message: 'Required when invoice_date_kind is \'continuous_date_end_on\'.',
-      })
-    }
-    if (!v.continuous_service_end_on) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['continuous_service_end_on'],
-        message: 'Required when invoice_date_kind is \'continuous_date_end_on\'.',
-      })
-    }
-  }
 })
-
-// -- Types -------------------------------------------------------------------
-
-export type TInvoice = z.infer<typeof Invoice>
-export type TInvoiceCreate = z.infer<typeof InvoiceCreate>
-export type TService = z.infer<typeof Service>
