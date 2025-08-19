@@ -1,0 +1,40 @@
+{
+  "name": "infakt-sdk",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Type-safe infakt SDK ",
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": {
+        "default": "./dist/index.mjs"
+      },
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.base.json --noEmit",
+    "build": "npm run typecheck && tsup --tsconfig tsconfig.build.json",
+    "dev": "tsup --watch --tsconfig tsconfig.build.json",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "dependencies": {
+    "ofetch": "^1.4.1",
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^5.2.1",
+    "eslint": "^9.33.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  }
+}
